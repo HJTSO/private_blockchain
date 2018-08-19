@@ -95,7 +95,7 @@ class Blockchain{
         this.getBlockHeight(height => {
         	//console.log('Height: ',height);
 	        if (height < 0) {
-			  // Genesis block persist as the first block in the blockchain	
+			  // ● Genesis block persist as the first block in the blockchain	
 			  this.addBlock(new Block("First block in the chain - Genesis block"));
 	        }
         })
