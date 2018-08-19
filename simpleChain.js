@@ -82,19 +82,23 @@ class Block{
 |  Class with a constructor for new blockchain 		|
 |  ================================================*/
 
-// Genesis block persist as the first block in the blockchain
-function createGenesisBlock() {
-    return getDataToLevelDBLength().then((length) => {
-      if (length == 0) {
-        return Blockchain.addBlock(new Block("First block in the chain - Genesis block"));
-      }
-    });
-  }
-
 class Blockchain{
     constructor(){
-      //this.chain = [];
-      this.addBlock(new Block("First block in the chain - Genesis block"));
+//         const height = this.getBlockHeight().then(height => {
+// 	        console.log('Height: ' + height);
+// 	        if (height < 0) {
+// 			  // Genesis block persist as the first block in the blockchain
+// 			  this.addBlock(new Block("First block in the chain - Genesis block"));
+// 			  console.log('Genesis block');
+// 	        }
+//         })
+        this.getBlockHeight(height => {
+        	//console.log('Height: ',height);
+	        if (height < 0) {
+			  // Genesis block persist as the first block in the blockchain	
+			  this.addBlock(new Block("First block in the chain - Genesis block"));
+	        }
+        })
     }
 
     // Add new block
@@ -122,11 +126,15 @@ class Blockchain{
       });
     }
 
-  	// ● Retrieve current block height within the LevelDB chain
-    getBlockHeight(){
-      getHeightFromLevelDB(function(height) {
-        console.log('Height: ' + (height).toString());
-      });
+      // ● Retrieve current block height within the LevelDB chain
+    getBlockHeight(callback){
+	  // return new Promise((resolve, reject) => {
+// 		  getHeightFromLevelDB(function(height) {
+// 		          console.log('Height: ' + (height).toString());
+// 				  resolve(height)
+// 		        });
+// 	  })
+	  getHeightFromLevelDB(callback);
     }
 
     // ● Gretrieve a block by it's block heigh within the LevelDB chain
@@ -136,8 +144,8 @@ class Blockchain{
         console.log(JSON.parse(block));
       });
     }
-	
-  	// ● Validate a block stored within levelDB
+
+      // ● Validate a block stored within levelDB
     validateBlock(blockHeight){
       validateLevelDBBlock(blockHeight, function(isValid) {
         if(isValid) {
@@ -154,7 +162,7 @@ class Blockchain{
       db.createReadStream().on('data', function (data) {
         // validate block
         validateLevelDBBlock(i, function(value) {
-		  //if (blockHash!==previousHash)
+          //if (blockHash!==previousHash)
           if(!value) errorLog.push(i);
         });
         chain.push(data.value);
@@ -184,15 +192,15 @@ class Blockchain{
 
 
 
-
 /* ===== Test =====*/
 
 // Create blockchain with blockchain variable
-let blockchain = new Blockchain();
+let blockchain = new Blockchain('');
 
 // Generate 10 blocks using a for loop
 for (var i = 0; i < 10; i++) {
   blockchain.addBlock(new Block("test data "+(i+1)));
+  console.log('Block ' +(i+1) + ' was added');
 }
 
 // Validate blockchain
